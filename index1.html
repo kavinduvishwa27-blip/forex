@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarketPulse Pro — Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            width: 100%; height: 100%;
+            overflow: hidden;
+            font-family: 'Sora', sans-serif;
+            background: #000;
+        }
+
+        /* ── BLURRED BACKDROP VIDEO ── */
+        #bgVideo {
+            position: fixed;
+            inset: -10%;
+            width: 120%;
+            height: 120%;
+            object-fit: cover;
+            z-index: 0;
+            filter: blur(55px) brightness(0.4) saturate(1.6);
+            transform: scale(1.1);
+        }
+
+        /* ── MAIN VIDEO ── */
+        #videoWrap {
+            position: fixed;
+            inset: 0;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-mask-image: radial-gradient(
+                ellipse 78% 78% at 50% 50%,
+                black 40%,
+                rgba(0,0,0,0.95) 52%,
+                rgba(0,0,0,0.7) 62%,
+                rgba(0,0,0,0.3) 72%,
+                transparent 85%
+            );
+            mask-image: radial-gradient(
+                ellipse 78% 78% at 50% 50%,
+                black 40%,
+                rgba(0,0,0,0.95) 52%,
+                rgba(0,0,0,0.7) 62%,
+                rgba(0,0,0,0.3) 72%,
+                transparent 85%
+            );
+        }
+        #introVideo {
+            max-width: 100vw;
+            max-height: 100vh;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* ── VIGNETTE ── */
+        #vignette {
+            position: fixed;
+            inset: 0;
+            z-index: 3;
+            pointer-events: none;
+            background: radial-gradient(
+                ellipse 70% 70% at 50% 50%,
+                transparent 30%,
+                rgba(0,0,0,0.5) 65%,
+                rgba(0,0,0,0.82) 100%
+            );
+        }
+
+        /* ── BRANDING TOP ── */
+        #branding {
+            position: fixed;
+            top: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            text-align: center;
+            animation: fadeDown 0.9s cubic-bezier(0.2,0,0,1) 0.2s both;
+            white-space: nowrap;
+        }
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateX(-50%) translateY(-16px); }
+            to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .logo-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 7px 18px 7px 8px;
+            border-radius: 50px;
+            background: rgba(3, 7, 18, 0.75);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 24px rgba(0, 240, 255, 0.08), inset 0 1px 0 rgba(255,255,255,0.06);
+        }
+        .logo-icon {
+            width: 32px; height: 32px;
+            border-radius: 9px;
+            background: rgba(0, 212, 255, 0.12);
+            border: 1px solid rgba(0, 212, 255, 0.28);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px;
+        }
+        .logo-text {
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            color: #fff;
+            line-height: 1.1;
+        }
+        .logo-text span { color: #00f0ff; text-shadow: 0 0 18px rgba(0,240,255,0.55); }
+        .logo-sub {
+            font-size: 8px;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(136,153,176,0.75);
+            margin-top: 2px;
+        }
+
+        /* ── LOGIN CARD ── */
+        #loginWrap {
+            position: fixed;
+            inset: 0;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            background: rgba(5, 12, 28, 0.72);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            border: 1px solid rgba(0, 240, 255, 0.18);
+            border-top: 2px solid rgba(0, 240, 255, 0.55);
+            border-radius: 24px;
+            padding: 40px 36px 36px;
+            box-shadow:
+                0 0 60px rgba(0, 240, 255, 0.07),
+                0 24px 64px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(255,255,255,0.06);
+            animation: cardRise 0.9s cubic-bezier(0.2,0,0,1) 0.35s both;
+        }
+        @keyframes cardRise {
+            from { opacity: 0; transform: translateY(28px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .card-eyebrow {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(0, 240, 255, 0.6);
+            font-family: 'Space Mono', monospace;
+            margin-bottom: 6px;
+        }
+        .card-title {
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            color: #fff;
+            line-height: 1.1;
+            margin-bottom: 6px;
+        }
+        .card-title span { color: #00f0ff; text-shadow: 0 0 20px rgba(0,240,255,0.4); }
+        .card-desc {
+            font-size: 12px;
+            color: rgba(136,153,176,0.75);
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        /* ── FIELD ── */
+        .field {
+            margin-bottom: 16px;
+        }
+        .field label {
+            display: block;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(136,153,176,0.8);
+            margin-bottom: 8px;
+            font-family: 'Space Mono', monospace;
+        }
+        .input-wrap {
+            position: relative;
+        }
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            color: rgba(0, 240, 255, 0.4);
+            pointer-events: none;
+            transition: color 0.2s;
+        }
+        .field input {
+            width: 100%;
+            height: 48px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 0 16px 0 42px;
+            font-family: 'Sora', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            outline: none;
+            transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+            letter-spacing: 0.01em;
+        }
+        .field input::placeholder { color: rgba(136,153,176,0.4); font-weight: 400; }
+        .field input:focus {
+            border-color: rgba(0, 240, 255, 0.45);
+            background: rgba(0, 240, 255, 0.04);
+            box-shadow: 0 0 0 3px rgba(0,240,255,0.08), 0 0 20px rgba(0,240,255,0.06);
+        }
+        .field input:focus + .input-icon,
+        .input-wrap:focus-within .input-icon {
+            color: rgba(0, 240, 255, 0.75);
+        }
+        /* password eye toggle */
+        .eye-btn {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: rgba(136,153,176,0.5);
+            padding: 4px;
+            transition: color 0.2s;
+        }
+        .eye-btn:hover { color: rgba(0,240,255,0.7); }
+
+        /* ── ERROR MESSAGE ── */
+        #errorMsg {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: rgba(255, 51, 85, 0.1);
+            border: 1px solid rgba(255, 51, 85, 0.3);
+            margin-bottom: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #ff6b8a;
+            animation: shake 0.35s ease;
+        }
+        #errorMsg.visible { display: flex; }
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            20%      { transform: translateX(-6px); }
+            40%      { transform: translateX(6px); }
+            60%      { transform: translateX(-4px); }
+            80%      { transform: translateX(4px); }
+        }
+
+        /* ── SUCCESS STATE ── */
+        #successMsg {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 14px;
+            border-radius: 10px;
+            background: rgba(0, 230, 118, 0.08);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            margin-bottom: 16px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #00e676;
+            text-align: center;
+        }
+        #successMsg.visible { display: flex; }
+        #successMsg .welcome-name {
+            font-size: 18px;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: -0.02em;
+        }
+
+        /* ── LOGIN BUTTON ── */
+        #loginBtn {
+            width: 100%;
+            height: 50px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 50%, #00e5ff 100%);
+            color: #030712;
+            font-family: 'Sora', sans-serif;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.25s;
+            box-shadow: 0 0 30px rgba(0,212,255,0.3), 0 4px 16px rgba(0,0,0,0.4);
+        }
+        #loginBtn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.25), transparent);
+            opacity: 0;
+            transition: opacity 0.25s;
+        }
+        #loginBtn:hover::before { opacity: 1; }
+        #loginBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 40px rgba(0,212,255,0.45), 0 8px 24px rgba(0,0,0,0.5);
+        }
+        #loginBtn:active { transform: translateY(0) scale(0.98); }
+        #loginBtn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-inner { display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+        /* Loading spinner inside button */
+        .spinner {
+            width: 16px; height: 16px;
+            border: 2px solid rgba(3,7,18,0.3);
+            border-top-color: #030712;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: none;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── DIVIDER ── */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0 0;
+        }
+        .divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
+        .divider-text { font-size: 9px; font-weight: 700; letter-spacing: 0.12em; color: rgba(136,153,176,0.4); font-family: 'Space Mono', monospace; }
+
+        /* ── BOTTOM STATUS ── */
+        .status-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 14px;
+        }
+        .status-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #00e676;
+            box-shadow: 0 0 8px #00e676;
+            animation: pulse 1.8s ease-out infinite;
+        }
+        @keyframes pulse {
+            0%   { box-shadow: 0 0 0 0 rgba(0,230,118,0.7); }
+            70%  { box-shadow: 0 0 0 6px rgba(0,230,118,0); }
+            100% { box-shadow: 0 0 0 0 rgba(0,230,118,0); }
+        }
+        .status-text {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: rgba(0,230,118,0.6);
+            font-family: 'Space Mono', monospace;
+        }
+
+        /* ── TRANSITION FLASH ── */
+        #flashOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            background: #030712;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.9s ease;
+        }
+        #flashOverlay.active { opacity: 1; }
+
+        /* Scan line effect */
+        .login-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0,240,255,0.01) 2px,
+                rgba(0,240,255,0.01) 4px
+            );
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Blurred backdrop -->
+<video id="bgVideo" autoplay muted playsinline preload="auto" loop>
+    <source src="gif.mp4" type="video/mp4">
+</video>
+
+<!-- Main video — sharp, centered -->
+<div id="videoWrap">
+    <video id="introVideo" autoplay muted playsinline preload="auto" loop>
+        <source src="gif.mp4" type="video/mp4">
+    </video>
+</div>
+
+<!-- Vignette -->
+<div id="vignette"></div>
+
+<!-- Hidden audio -->
+<audio id="introAudio" src="music2.webm" preload="auto" loop></audio>
+
+<!-- Top branding -->
+<div id="branding">
+    <div class="logo-pill">
+        <div class="logo-icon">📈</div>
+        <div>
+            <div class="logo-text">MarketPulse <span>Pro</span></div>
+            <div class="logo-sub">8-Strategy Confluence Engine</div>
+        </div>
+    </div>
+</div>
+
+<!-- LOGIN CARD -->
+<div id="loginWrap">
+    <div class="login-card">
+
+        <div class="card-eyebrow">Secure Access Portal</div>
+        <div class="card-title">Welcome <span>Back</span></div>
+        <div class="card-desc">Sign in to access your trading dashboard and real-time market analytics.</div>
+
+        <!-- Error message -->
+        <div id="errorMsg">
+            <span>⚠</span>
+            <span id="errorText">Invalid username or password.</span>
+        </div>
+
+        <!-- Success message -->
+        <div id="successMsg">
+            <span>✦ ACCESS GRANTED</span>
+            <span class="welcome-name" id="welcomeName"></span>
+            <span style="font-size:11px;color:rgba(0,230,118,0.7);font-weight:600">Redirecting to dashboard…</span>
+        </div>
+
+        <!-- Username -->
+        <div class="field">
+            <label for="username">Username</label>
+            <div class="input-wrap">
+                <input
+                    type="text"
+                    id="username"
+                    placeholder="Enter your username"
+                    autocomplete="username"
+                    spellcheck="false"
+                >
+                <span class="input-icon">👤</span>
+            </div>
+        </div>
+
+        <!-- Password -->
+        <div class="field">
+            <label for="password">Password</label>
+            <div class="input-wrap">
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                >
+                <span class="input-icon">🔒</span>
+                <button class="eye-btn" id="eyeBtn" type="button" title="Show/hide password">👁</button>
+            </div>
+        </div>
+
+        <!-- Login button -->
+        <button id="loginBtn" onclick="handleLogin()">
+            <div class="btn-inner">
+                <div class="spinner" id="spinner"></div>
+                <span id="btnLabel">ACCESS DASHBOARD →</span>
+            </div>
+        </button>
+
+        <div class="divider">
+            <div class="divider-line"></div>
+            <div class="divider-text">MARKETPULSE PRO v2.0</div>
+            <div class="divider-line"></div>
+        </div>
+
+        <div class="status-row">
+            <div class="status-dot"></div>
+            <div class="status-text">Live Markets · Binance · Kraken</div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Transition overlay -->
+<div id="flashOverlay"></div>
+
+<script>
+    const bgVid   = document.getElementById('bgVideo');
+    const vidMain = document.getElementById('introVideo');
+    const audio   = document.getElementById('introAudio');
+    const flash   = document.getElementById('flashOverlay');
+
+    // Sync bg video with main
+    vidMain.addEventListener('timeupdate', () => {
+        if (bgVid && Math.abs(bgVid.currentTime - vidMain.currentTime) > 0.4) {
+            bgVid.currentTime = vidMain.currentTime;
+        }
+    });
+
+    // Play audio immediately
+    audio.volume = 0.75;
+    audio.play().catch(() => {
+        const unlock = () => {
+            audio.play().catch(() => {});
+            ['click','touchstart','keydown'].forEach(ev => document.removeEventListener(ev, unlock));
+        };
+        ['click','touchstart','keydown'].forEach(ev =>
+            document.addEventListener(ev, unlock, { passive: true })
+        );
+    });
+
+    // Eye toggle
+    const eyeBtn   = document.getElementById('eyeBtn');
+    const pwdInput = document.getElementById('password');
+    eyeBtn.addEventListener('click', () => {
+        const isHidden = pwdInput.type === 'password';
+        pwdInput.type  = isHidden ? 'text' : 'password';
+        eyeBtn.textContent = isHidden ? '🙈' : '👁';
+    });
+
+    // Enter key support
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') handleLogin();
+    });
+
+    // ── Credentials ──
+    const USERS = {
+        'Imanka':  '1234',
+        'Kavindu': '1234'
+    };
+
+    let redirected = false;
+
+    function handleLogin() {
+        if (redirected) return;
+
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+        const errorEl  = document.getElementById('errorMsg');
+        const successEl = document.getElementById('successMsg');
+        const btn      = document.getElementById('loginBtn');
+        const spinner  = document.getElementById('spinner');
+        const btnLabel = document.getElementById('btnLabel');
+
+        // Hide previous messages
+        errorEl.classList.remove('visible');
+        successEl.classList.remove('visible');
+
+        // Validate empty
+        if (!username || !password) {
+            showError('Please enter both username and password.');
+            return;
+        }
+
+        // Check credentials
+        if (USERS[username] && USERS[username] === password) {
+            // ✅ Success
+            btn.disabled = true;
+            spinner.style.display = 'block';
+            btnLabel.textContent = 'Authenticating…';
+
+            // Save user to localStorage for dashboard greeting
+            localStorage.setItem('mp_user', username);
+
+            setTimeout(() => {
+                spinner.style.display = 'none';
+                btnLabel.textContent = '✦ Authenticated';
+                document.getElementById('welcomeName').textContent = `Welcome, ${username}!`;
+                successEl.classList.add('visible');
+
+                setTimeout(() => {
+                    redirected = true;
+                    flash.classList.add('active');
+                    setTimeout(() => { window.location.href = 'index.html'; }, 900);
+                }, 1200);
+            }, 900);
+
+        } else {
+            // ❌ Fail
+            if (!USERS[username]) {
+                showError('Username not found. Try "Imanka" or "Kavindu".');
+            } else {
+                showError('Incorrect password. Please try again.');
+            }
+        }
+    }
+
+    function showError(msg) {
+        const errorEl  = document.getElementById('errorMsg');
+        document.getElementById('errorText').textContent = msg;
+        errorEl.classList.remove('visible');
+        // Force reflow to re-trigger shake animation
+        void errorEl.offsetWidth;
+        errorEl.classList.add('visible');
+
+        // Shake the input fields
+        ['username','password'].forEach(id => {
+            const el = document.getElementById(id);
+            el.style.borderColor = 'rgba(255,51,85,0.5)';
+            setTimeout(() => { el.style.borderColor = ''; }, 1500);
+        });
+    }
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarketPulse Pro | 8-Strategy Analysis Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Three.js for Premium 3D Background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Spline Viewer -->
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.0.51/build/spline-viewer.js"></script>
+    <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Sora','sans-serif'],mono:['Space Mono','monospace']}}}}</script>
+    <style>
+        *,*::before,*::after{box-sizing:border-box}
+        :root{--ink:#030712;--panel:rgba(13,22,36,0.55);--panel2:rgba(17,28,46,0.6);--border:rgba(255,255,255,0.08);--accent:#00f0ff;--gold:#ffd166;--bull:#00ff88;--bear:#ff3355;--muted:#8899b0;--glass-shadow:0 8px 32px 0 rgba(0,0,0,0.37);}
+        body{font-family:'Sora',sans-serif;background:var(--ink);color:#e2eaf5;margin:0;overflow-x:hidden}
+        #bgCanvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none; }
+        .spline-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; opacity: 0.25; mix-blend-mode: screen; filter: blur(2px); }
+        .panel{background:var(--panel);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--border);box-shadow:var(--glass-shadow);border-radius:20px;position:relative;overflow:hidden;transition:all 0.3s ease;}
+        .panel:hover{border-color:rgba(255,255,255,0.15);box-shadow:0 12px 40px 0 rgba(0,0,0,0.5);transform:translateY(-2px);}
+        .panel-accent{border-top:2px solid var(--accent)}
+        .panel-gold{border-top:2px solid var(--gold)}
+        .ticker-wrap{overflow:hidden;background:#07101f;border-bottom:1px solid var(--border)}
+        .ticker-inner{display:flex;animation:tickerMove 60s linear infinite;white-space:nowrap;width:max-content}
+        .ticker-inner:hover{animation-play-state:paused}
+        @keyframes tickerMove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+        @keyframes flashGreen{0%,100%{color:#e2eaf5}30%{color:var(--bull);text-shadow:0 0 20px rgba(0,230,118,0.9)}}
+        @keyframes flashRed{0%,100%{color:#e2eaf5}30%{color:var(--bear);text-shadow:0 0 20px rgba(255,61,90,0.9)}}
+        .flash-up{animation:flashGreen 0.7s ease}
+        .flash-down{animation:flashRed 0.7s ease}
+        .signal-buy{background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.4);box-shadow:0 0 30px rgba(0,230,118,0.12)}
+        .signal-sell{background:rgba(255,61,90,0.08);border:1px solid rgba(255,61,90,0.4);box-shadow:0 0 30px rgba(255,61,90,0.12)}
+        .signal-wait{background:rgba(255,209,102,0.07);border:1px solid rgba(255,209,102,0.3)}
+        .signal-neutral{background:rgba(136,153,176,0.06);border:1px solid rgba(136,153,176,0.2)}
+        .live-dot{width:8px;height:8px;border-radius:50%;background:var(--bull);animation:livePulse 1.8s ease-out infinite}
+        @keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(0,230,118,0.7)}70%{box-shadow:0 0 0 10px rgba(0,230,118,0)}100%{box-shadow:0 0 0 0 rgba(0,230,118,0)}}
+        .offline-dot{width:8px;height:8px;border-radius:50%;background:var(--bear)}
+        .gauge-bar{height:6px;border-radius:3px;background:var(--border);overflow:hidden}
+        .gauge-fill{height:100%;border-radius:3px;transition:width 1.2s cubic-bezier(0.4,0,0.2,1)}
+        .ind-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)}
+        .ind-row:last-child{border-bottom:none}
+        .ind-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:0.05em;font-family:'Space Mono',monospace;white-space:nowrap}
+        .ind-bull{background:rgba(0,230,118,0.15);color:var(--bull)}
+        .ind-bear{background:rgba(255,61,90,0.15);color:var(--bear)}
+        .ind-neut{background:rgba(255,209,102,0.12);color:var(--gold)}
+        .news-item{border-left:3px solid var(--border);padding:5px 0 5px 10px;transition:all 0.2s;cursor:pointer}
+        .news-item:hover{border-left-color:var(--accent);background:rgba(0,212,255,0.03);border-radius:0 6px 6px 0}
+        .news-item.bullish{border-left-color:rgba(0,230,118,0.5)}
+        .news-item.bearish{border-left-color:rgba(255,61,90,0.5)}
+        .layer-btn{opacity:0.4;transition:opacity 0.2s}
+        .layer-btn.active{opacity:1}
+        .mono{font-family:'Space Mono',monospace}
+        ::-webkit-scrollbar{width:5px}
+        ::-webkit-scrollbar-track{background:var(--ink)}
+        ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+        select option{background:var(--panel);color:#e2eaf5}
+        .interval-btn.active{background:rgba(0,212,255,0.12);color:var(--accent)}
+        /* BANNER */
+        #signalBanner{position:sticky;top:0;z-index:200;transition:background 0.5s,box-shadow 0.5s,border-color 0.5s;border-bottom:3px solid transparent}
+        #signalBanner.buy{background:linear-gradient(135deg,#002d12,#001a0a 50%,#002d12);border-bottom-color:var(--bull);box-shadow:0 4px 60px rgba(0,230,118,0.25)}
+        #signalBanner.sell{background:linear-gradient(135deg,#2d0010,#1a0008 50%,#2d0010);border-bottom-color:var(--bear);box-shadow:0 4px 60px rgba(255,61,90,0.25)}
+        #signalBanner.wait{background:linear-gradient(135deg,#1e1500,#110e00 50%,#1e1500);border-bottom-color:var(--gold);box-shadow:0 4px 30px rgba(255,209,102,0.15)}
+        #signalBanner.neutral{background:#07101f;border-bottom-color:var(--border)}
+        .tl-dot{width:22px;height:22px;border-radius:50%;transition:all 0.4s;flex-shrink:0}
+        .tl-red{background:#2a0a10;border:2px solid #4a1020}
+        .tl-yellow{background:#1a1200;border:2px solid #3a2600}
+        .tl-green{background:#001a08;border:2px solid #003010}
+        .tl-red.on{background:var(--bear);border-color:var(--bear);box-shadow:0 0 14px var(--bear),0 0 28px rgba(255,61,90,0.3)}
+        .tl-yellow.on{background:var(--gold);border-color:var(--gold);box-shadow:0 0 14px var(--gold),0 0 28px rgba(255,209,102,0.3)}
+        .tl-green.on{background:var(--bull);border-color:var(--bull);box-shadow:0 0 14px var(--bull),0 0 28px rgba(0,230,118,0.3)}
+        @keyframes signalPulse{0%,100%{opacity:1}50%{opacity:0.65}}
+        .signal-pulse{animation:signalPulse 2s ease-in-out infinite}
+        .banner-box{border-radius:10px;padding:8px 14px;text-align:center;min-width:100px}
+        .bb-gray{background:rgba(136,153,176,0.08);border:1px solid rgba(136,153,176,0.2)}
+        .bb-green{background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.25)}
+        .bb-red{background:rgba(255,61,90,0.08);border:1px solid rgba(255,61,90,0.25)}
+        .score-ring{position:relative;width:56px;height:56px}
+        .score-ring svg{transform:rotate(-90deg)}
+        .ring-bg{fill:none;stroke:#1a2540;stroke-width:5}
+        .ring-val{fill:none;stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset 1s ease,stroke 0.5s}
+        .ring-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:700;font-size:13px}
+        #signalToast{position:fixed;bottom:24px;right:24px;z-index:9999;transition:opacity 0.4s,transform 0.4s;pointer-events:none}
+        #signalToast.hidden{opacity:0;transform:translateY(20px)}
+        #soundToggle{cursor:pointer;border-radius:10px;padding:7px 12px;font-size:13px;transition:all 0.2s;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--muted)}
+        #soundToggle.on{border-color:rgba(255,209,102,0.5);color:var(--gold);background:rgba(255,209,102,0.08)}
+        .strategies-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+        @media(max-width:1200px){.strategies-grid{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:768px){.strategies-grid{grid-template-columns:1fr}}
+        .strat-card{border-radius:12px;padding:14px;transition:all 0.3s;position:relative;overflow:hidden}
+        .sc-buy{background:rgba(0,230,118,0.06);border:1px solid rgba(0,230,118,0.28)}
+        .sc-sell{background:rgba(255,61,90,0.06);border:1px solid rgba(255,61,90,0.28)}
+        .sc-lean-buy{background:rgba(0,230,118,0.03);border:1px solid rgba(0,230,118,0.15)}
+        .sc-lean-sell{background:rgba(255,61,90,0.03);border:1px solid rgba(255,61,90,0.15)}
+        .sc-hold{background:rgba(255,209,102,0.04);border:1px solid rgba(255,209,102,0.2)}
+        .sc-neutral{background:rgba(136,153,176,0.04);border:1px solid rgba(136,153,176,0.15)}
+        .conf-track{height:3px;border-radius:2px;background:rgba(255,255,255,0.06);overflow:hidden;margin-top:6px}
+        .conf-fill{height:100%;border-radius:2px;transition:width 1s ease}
+        .hc-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;font-family:'Space Mono',monospace;letter-spacing:0.05em}
+        .hc-strong-buy{background:rgba(0,230,118,0.2);color:var(--bull);border:1px solid rgba(0,230,118,0.4)}
+        .hc-strong-sell{background:rgba(255,61,90,0.2);color:var(--bear);border:1px solid rgba(255,61,90,0.4)}
+        .hc-lean{background:rgba(255,209,102,0.15);color:var(--gold);border:1px solid rgba(255,209,102,0.3)}
+        .hc-neutral{background:rgba(136,153,176,0.1);color:var(--muted);border:1px solid rgba(136,153,176,0.2)}
+        .verdict-buy{background:rgba(0,230,118,0.07);border:1px solid rgba(0,230,118,0.35)}
+        .verdict-sell{background:rgba(255,61,90,0.07);border:1px solid rgba(255,61,90,0.35)}
+        .verdict-lean{background:rgba(255,209,102,0.05);border:1px solid rgba(255,209,102,0.25)}
+        .verdict-neutral{background:rgba(136,153,176,0.04);border:1px solid rgba(136,153,176,0.2)}
+        .vote-track{height:8px;border-radius:4px;overflow:hidden;background:var(--border);display:flex}
+        .vote-bull-bar{height:100%;border-radius:4px 0 0 4px;background:var(--bull);transition:width 1s ease}
+        .vote-bear-bar{height:100%;border-radius:0 4px 4px 0;background:var(--bear);transition:width 1s ease;margin-left:auto}
+        .disclaimer{background:rgba(255,209,102,0.04);border:1px solid rgba(255,209,102,0.15);border-radius:12px}
+        /* Settings panel */
+        #settingsPanel{position:fixed;top:70px;right:20px;z-index:500;background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:20px;width:320px;box-shadow:0 8px 32px rgba(0,0,0,0.5)}
+        .api-input{width:100%;background:var(--ink);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:#e2eaf5;font-family:'Space Mono',monospace;font-size:12px;outline:none;transition:border-color 0.2s}
+        .api-input:focus{border-color:var(--accent)}
+        /* ── FAVORITES BAR ── */
+        .fav-bar{display:flex;align-items:center;gap:10px;padding:10px 24px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border);background:rgba(3,7,18,0.7);backdrop-filter:blur(12px);position:sticky;top:0;z-index:199;}
+        .fav-bar::-webkit-scrollbar{display:none}
+        .fav-pill{display:flex;align-items:center;gap:8px;padding:7px 14px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,0.04);cursor:pointer;transition:all 0.25s;white-space:nowrap;flex-shrink:0}
+        .fav-pill:hover{border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);transform:translateY(-1px)}
+        .fav-pill.active{border-color:rgba(0,240,255,0.4);background:rgba(0,240,255,0.06);}
+        .fav-pill.gold{border-color:rgba(255,209,102,0.4);background:rgba(255,209,102,0.06);}
+        .fav-pill.gold:hover,.fav-pill.gold.active{border-color:rgba(255,209,102,0.7);background:rgba(255,209,102,0.12);box-shadow:0 0 20px rgba(255,209,102,0.15);}
+        .fav-pill.eur{border-color:rgba(0,240,255,0.4);background:rgba(0,240,255,0.05);}
+        .fav-pill.eur:hover,.fav-pill.eur.active{border-color:rgba(0,240,255,0.7);background:rgba(0,240,255,0.12);box-shadow:0 0 20px rgba(0,240,255,0.15);}
+        .fav-star{color:var(--gold);font-size:10px;animation:starPulse 2.5s ease-in-out infinite}
+        @keyframes starPulse{0%,100%{opacity:1;text-shadow:0 0 4px var(--gold)}50%{opacity:0.6;text-shadow:0 0 12px var(--gold)}}
+        /* ── ENTRANCE ANIMATIONS ── */
+        @keyframes fadeInUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes fadeInLeft{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+        @keyframes scaleIn{from{opacity:0;transform:scale(0.94)}to{opacity:1;transform:scale(1)}}
+        .panel{animation:fadeInUp 0.5s ease both}
+        .panel:nth-child(1){animation-delay:0.05s}.panel:nth-child(2){animation-delay:0.1s}.panel:nth-child(3){animation-delay:0.15s}
+        /* ── SHIMMER ── */
+        @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+        .shimmer-line{height:10px;border-radius:5px;background:linear-gradient(90deg,rgba(255,255,255,0.04) 25%,rgba(255,255,255,0.1) 50%,rgba(255,255,255,0.04) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+        /* ── STRAT CARD 3D HOVER ── */
+        .strat-card{transition:all 0.3s cubic-bezier(0.2,0,0,1);transform-style:preserve-3d}
+        .strat-card:hover{transform:translateY(-4px) perspective(600px) rotateX(2deg);box-shadow:0 16px 40px rgba(0,0,0,0.4)}
+        /* ── GOLD GLOW PULSE ── */
+        @keyframes goldGlow{0%,100%{box-shadow:0 0 20px rgba(255,209,102,0.15)}50%{box-shadow:0 0 40px rgba(255,209,102,0.35),0 0 60px rgba(255,209,102,0.1)}}
+        .gold-glow{animation:goldGlow 3s ease-in-out infinite}
+        /* ── ACCENT GLOW PULSE ── */
+        @keyframes accentGlow{0%,100%{box-shadow:0 0 20px rgba(0,240,255,0.1)}50%{box-shadow:0 0 40px rgba(0,240,255,0.25)}}
+        .accent-glow{animation:accentGlow 3.5s ease-in-out infinite}
+        /* ── NUMBER TICK ── */
+        @keyframes numTick{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:translateY(0)}}
+        .num-tick{animation:numTick 0.3s ease}
+        @media(max-width:640px){
+            .fav-bar{padding:7px 10px;gap:6px}
+            .fav-pill{padding:5px 9px;font-size:11px;gap:6px}
+            .fav-pill span[style*="font-size:16px"]{display:none}
+            #signalBanner .banner-box{min-width:64px;padding:6px 8px}
+            #signalBanner .bb-gray div:first-child,#signalBanner .bb-green div:first-child,#signalBanner .bb-red div:first-child{font-size:8px}
+            #signalBanner [id^="banner"][id$="Entry"],[id^="banner"][id$="TP"],[id^="banner"][id$="SL"],[id^="banner"][id$="RR"]{font-size:0.8rem !important}
+            .hdr-subtitle{display:none}
+            .hdr-logo{width:32px;height:32px;border-radius:10px}
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+<!-- ThreeJS Background -->
+<canvas id="bgCanvas"></canvas>
+
+<!-- Auto-playing background music — plays music2 first, then music -->
+<audio id="bgMusic" src="music2.webm" autoplay preload="auto"
+    style="display:none" aria-hidden="true">
+</audio>
+<audio id="bgMusic2" src="music.webm" preload="auto"
+    style="display:none" aria-hidden="true">
+</audio>
+
+<!-- Finnhub Settings Panel (hidden by default) -->
+<div id="settingsPanel" class="hidden">
+    <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-newspaper" style="color:var(--gold)"></i>
+            <span class="text-sm font-bold text-white">Finnhub News Key</span>
+        </div>
+        <button onclick="openSettings()" style="color:var(--muted);background:none;border:none;cursor:pointer;font-size:16px">✕</button>
+    </div>
+    <p class="text-xs mb-3" style="color:var(--muted)">Optional: Add a free Finnhub key for better news covering all assets including forex. <a href="https://finnhub.io/register" target="_blank" style="color:var(--gold)">Get free key →</a></p>
+    <input type="text" id="fhKeyInput" class="api-input mb-3" placeholder="Paste Finnhub API key here…">
+    <button onclick="saveFinnhubKey()" class="w-full py-2.5 rounded-xl font-bold text-sm text-black" style="background:linear-gradient(135deg,var(--gold),#ffb700)">Save & Reload</button>
+    <p class="text-xs mt-2 text-center" style="color:var(--muted)">Without a key: CryptoCompare is used (crypto news only, always free)</p>
+</div>
+
+<!-- TICKER TAPE -->
+<div class="ticker-wrap py-1.5">
+    <div class="ticker-inner text-xs" id="tickerTape">
+        <span class="px-8" style="color:var(--muted)">Loading live prices…</span>
+    </div>
+</div>
+
+<!-- ══ MEGA SIGNAL BANNER ══ -->
+<div id="signalBanner" class="neutral">
+    <div style="max-width:1600px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">
+            <div class="tl-dot tl-red"    id="tlRed"></div>
+            <div class="tl-dot tl-yellow" id="tlYellow"></div>
+            <div class="tl-dot tl-green"  id="tlGreen"></div>
+        </div>
+        <div style="min-width:160px;flex-shrink:0">
+            <div id="bannerSignalWord" class="mono font-black" style="font-size:clamp(1.6rem,4vw,2.8rem);letter-spacing:0.06em;line-height:1;color:var(--muted)">LOADING…</div>
+            <div id="bannerSignalSub" class="text-xs mt-1" style="color:var(--muted)">Waiting for data</div>
+        </div>
+        <div style="width:1px;height:48px;background:rgba(255,255,255,0.08);flex-shrink:0"></div>
+        <div style="flex-shrink:0">
+            <div style="color:var(--muted);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase" id="bannerAssetLabel">-- · --</div>
+            <div id="bannerStratSummary" style="font-size:11px;color:#8899b0;margin-top:2px">--</div>
+        </div>
+        <div style="width:1px;height:48px;background:rgba(255,255,255,0.08);flex-shrink:0"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0">
+            <div class="score-ring">
+                <svg width="56" height="56" viewBox="0 0 56 56">
+                    <circle class="ring-bg" cx="28" cy="28" r="23"/>
+                    <circle class="ring-val" cx="28" cy="28" r="23" id="ringVal" stroke="#8899b0" stroke-dasharray="144.5" stroke-dashoffset="144.5"/>
+                </svg>
+                <div class="ring-text" id="ringText" style="color:#e2eaf5">--</div>
+            </div>
+            <div style="font-size:10px;color:var(--muted)">Score</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <div class="banner-box bb-gray"><div style="color:var(--muted);font-size:9px;font-weight:700;letter-spacing:0.08em;margin-bottom:4px">ENTRY</div><div id="bannerEntry" style="font-family:'Space Mono',monospace;font-weight:900;font-size:0.95rem;color:#e2eaf5">--</div></div>
+            <div class="banner-box bb-green"><div style="color:var(--bull);font-size:9px;font-weight:700;letter-spacing:0.08em;margin-bottom:4px">TAKE PROFIT</div><div id="bannerTP" style="font-family:'Space Mono',monospace;font-weight:900;font-size:0.95rem;color:var(--bull)">--</div></div>
+            <div class="banner-box bb-red"><div style="color:var(--bear);font-size:9px;font-weight:700;letter-spacing:0.08em;margin-bottom:4px">STOP LOSS</div><div id="bannerSL" style="font-family:'Space Mono',monospace;font-weight:900;font-size:0.95rem;color:var(--bear)">--</div></div>
+            <div class="banner-box bb-gray"><div style="color:var(--muted);font-size:9px;font-weight:700;letter-spacing:0.08em;margin-bottom:4px">R:R RATIO</div><div id="bannerRR" style="font-family:'Space Mono',monospace;font-weight:900;font-size:0.95rem;color:var(--gold)">--</div></div>
+        </div>
+        <div style="width:1px;height:48px;background:rgba(255,255,255,0.08);flex-shrink:0"></div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap" id="bannerPills"></div>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0">
+            <div style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,0.04)">
+                <div class="offline-dot" id="connDot"></div>
+                <span id="connLabel">Connecting…</span>
+            </div>
+            <button id="soundToggle" onclick="toggleSound()" title="Toggle alert sounds"><i class="fa-solid fa-bell-slash" id="soundIcon"></i></button>
+            <button onclick="openSettings()" style="cursor:pointer;border-radius:10px;padding:7px 12px;font-size:13px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--muted)" title="News API Settings"><i class="fa-solid fa-newspaper"></i></button>
+            <div style="text-align:right">
+                <div style="color:var(--muted);font-size:9px;font-weight:700;letter-spacing:0.08em">UPDATED</div>
+                <div id="bannerTimestamp" class="mono text-xs text-white">--</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div id="signalToast" class="hidden">
+    <div id="toastInner" style="background:#0d1624;border:1px solid var(--border);border-radius:14px;padding:14px 20px;min-width:230px;box-shadow:0 8px 32px rgba(0,0,0,0.6)">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:var(--muted);margin-bottom:6px">⚡ SIGNAL CHANGED</div>
+        <div id="toastText" style="font-family:'Space Mono',monospace;font-weight:900;font-size:1.35rem;color:white">--</div>
+        <div id="toastSub" style="font-size:11px;color:var(--muted);margin-top:3px">--</div>
+    </div>
+</div>
+
+<!-- HEADER — compact mobile-first -->
+<header id="siteHeader" class="relative z-10" style="border-bottom:1px solid var(--border);backdrop-filter:blur(16px);background:rgba(3,7,18,0.8)">
+
+    <!-- ROW 1: logo + title + live dot (always visible, single line) -->
+    <div class="flex items-center justify-between px-3 md:px-8" style="padding-top:10px;padding-bottom:8px">
+        <div class="flex items-center gap-2">
+            <div class="hdr-logo w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3)">
+                <i class="fa-solid fa-chart-candlestick text-sm" style="color:var(--accent)"></i>
+            </div>
+            <div>
+                <h1 class="font-black text-white leading-tight" style="font-size:clamp(0.95rem,4vw,1.3rem);letter-spacing:-0.02em">MarketPulse <span style="color:var(--accent);text-shadow:0 0 16px rgba(0,240,255,0.4)">Pro</span></h1>
+                <p class="hdr-subtitle text-xs hidden md:block" style="color:var(--muted)">8-Strategy Confluence Engine · Binance · Kraken · Real-Time</p>
+            </div>
+        </div>
+        <!-- Right side: live dot + sound + settings -->
+        <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg" style="background:var(--panel);border:1px solid var(--border)">
+                <div class="offline-dot" id="headerLiveDot" style="width:6px;height:6px"></div>
+                <span class="text-xs font-semibold text-white" id="headerLiveLabel" style="font-size:10px">LIVE</span>
+                <span class="mono hidden sm:inline" style="font-size:9px;color:var(--muted)" id="lastUpdate">--</span>
+            </div>
+            <button id="soundToggle" onclick="toggleSound()" title="Toggle sounds" style="width:30px;height:30px;border-radius:8px;padding:0;font-size:12px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--muted);cursor:pointer"><i class="fa-solid fa-bell-slash" id="soundIcon"></i></button>
+            <button onclick="openSettings()" style="width:30px;height:30px;border-radius:8px;padding:0;font-size:12px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--muted);cursor:pointer" title="Settings"><i class="fa-solid fa-newspaper"></i></button>
+        </div>
+    </div>
+
+    <!-- ROW 2: asset selector + interval buttons (scrollable on mobile) -->
+    <div class="flex items-center gap-2 px-3 md:px-8 pb-2.5 overflow-x-auto" style="scrollbar-width:none">
+        <div class="relative flex-shrink-0">
+            <select id="assetSelector" class="appearance-none font-semibold rounded-xl outline-none cursor-pointer" style="background:var(--panel);border:1px solid var(--border);color:#e2eaf5;padding:6px 28px 6px 10px;font-size:12px;min-width:0">
+                <optgroup label="★ Favorites">
+                    <option value="PAXGUSDT">⭐ Gold (XAU/USD)</option>
+                    <option value="EURUSDT">⭐ EUR/USD</option>
+                </optgroup>
+                <optgroup label="── Crypto">
+                    <option value="BTCUSDT">₿ BTC/USD</option>
+                    <option value="ETHUSDT">Ξ ETH/USD</option>
+                    <option value="SOLUSDT">◎ SOL/USD</option>
+                    <option value="BNBUSDT">◆ BNB/USD</option>
+                    <option value="XRPUSDT">✦ XRP/USD</option>
+                </optgroup>
+                <optgroup label="── Forex">
+                    <option value="GBPUSDT">GBP/USD</option>
+                    <option value="AUDUSDT">AUD/USD</option>
+                    <option value="USDJPY">USD/JPY</option>
+                    <option value="USDCAD">USD/CAD</option>
+                    <option value="USDCHF">USD/CHF</option>
+                    <option value="EURJPY">EUR/JPY</option>
+                    <option value="NZDUSDT">NZD/USD</option>
+                </optgroup>
+            </select>
+            <i class="fa-solid fa-chevron-down pointer-events-none absolute right-2 top-1/2 -translate-y-1/2" style="font-size:9px;color:var(--muted)"></i>
+        </div>
+        <!-- Interval buttons -->
+        <div class="flex gap-1 rounded-xl flex-shrink-0" style="background:var(--panel);border:1px solid var(--border);padding:3px">
+            <button data-interval="5m"  class="interval-btn font-bold rounded-lg" style="padding:4px 8px;font-size:11px;color:var(--muted)">5m</button>
+            <button data-interval="15m" class="interval-btn font-bold rounded-lg" style="padding:4px 8px;font-size:11px;color:var(--muted)">15m</button>
+            <button data-interval="1h"  class="interval-btn font-bold rounded-lg" style="padding:4px 8px;font-size:11px;color:var(--muted)">1H</button>
+            <button data-interval="4h"  class="interval-btn active font-bold rounded-lg" style="padding:4px 8px;font-size:11px">4H</button>
+            <button data-interval="1d"  class="interval-btn font-bold rounded-lg" style="padding:4px 8px;font-size:11px;color:var(--muted)">1D</button>
+        </div>
+    </div>
+
+</header>
+
+<!-- ★ FAVORITES QUICK BAR -->
+<div class="fav-bar" id="favBar">
+    <span style="color:var(--muted);font-size:9px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;flex-shrink:0">★ FAVORITES</span>
+    <div class="fav-pill gold" id="favGold" onclick="switchToFav('PAXGUSDT')" title="Switch to Gold">
+        <span style="font-size:16px">🥇</span>
+        <div>
+            <div style="font-size:9px;font-weight:800;letter-spacing:0.08em;color:var(--gold)">XAU/USD · GOLD</div>
+            <div id="favGoldPrice" class="mono" style="font-size:13px;font-weight:900;color:#e2eaf5">--</div>
+        </div>
+        <div style="text-align:right">
+            <div id="favGoldChg" style="font-size:10px;font-weight:700">--</div>
+            <div class="fav-star">★ FAV</div>
+        </div>
+    </div>
+    <div class="fav-pill eur" id="favEur" onclick="switchToFav('EURUSDT')" title="Switch to EUR/USD">
+        <span style="font-size:16px">🇪🇺</span>
+        <div>
+            <div style="font-size:9px;font-weight:800;letter-spacing:0.08em;color:var(--accent)">EUR/USD · EURO</div>
+            <div id="favEurPrice" class="mono" style="font-size:13px;font-weight:900;color:#e2eaf5">--</div>
+        </div>
+        <div style="text-align:right">
+            <div id="favEurChg" style="font-size:10px;font-weight:700">--</div>
+            <div class="fav-star">★ FAV</div>
+        </div>
+    </div>
+    <div style="flex:1"></div>
+    <div style="font-size:10px;color:var(--muted);flex-shrink:0">Click to switch · Live prices</div>
+</div>
+
+<!-- MAIN -->
+<main class="relative z-10 p-4 md:p-6 space-y-5" style="max-width:1600px;margin:0 auto">
+
+    <!-- ROW 1 -->
+    <div class="grid grid-cols-1 lg:grid-cols-[1fr_1fr_300px] gap-4">
+        <!-- Price Card -->
+        <div class="panel panel-accent p-6 flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                    <img id="assetLogo" src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" class="w-11 h-11 rounded-full object-cover p-0.5" style="background:rgba(255,255,255,0.06)" alt="">
+                    <div>
+                        <div id="assetName" class="font-bold text-white text-lg leading-none">Bitcoin</div>
+                        <div id="assetSymbolText" class="text-xs mt-0.5 mono" style="color:var(--muted)">BTC / USD</div>
+                    </div>
+                </div>
+                <div class="text-xs font-bold px-3 py-1 rounded-full" style="background:rgba(0,230,118,0.1);color:var(--bull);border:1px solid rgba(0,230,118,0.2)">LIVE</div>
+            </div>
+            <div class="mb-4">
+                <div id="priceSection" class="mono text-5xl font-black text-white tracking-tight mb-2"><i class="fa-solid fa-circle-notch fa-spin text-2xl" style="color:var(--muted)"></i></div>
+                <div id="priceChange" class="text-sm">--</div>
+            </div>
+            <div class="grid grid-cols-3 gap-3 pt-4" style="border-top:1px solid var(--border)">
+                <div><div class="text-xs mb-1" style="color:var(--muted)">24H HIGH</div><div id="statHigh" class="mono text-sm font-bold" style="color:var(--bull)">--</div></div>
+                <div><div class="text-xs mb-1" style="color:var(--muted)">24H LOW</div><div id="statLow" class="mono text-sm font-bold" style="color:var(--bear)">--</div></div>
+                <div><div class="text-xs mb-1" style="color:var(--muted)"><span id="statVolLabel">VOLUME</span></div><div id="statVol" class="mono text-sm font-bold text-white">--</div></div>
+            </div>
+        </div>
+
+        <!-- Indicators -->
+        <div class="panel p-5">
+            <div class="flex items-center gap-2 mb-4">
+                <i class="fa-solid fa-gauge-high text-sm" style="color:var(--accent)"></i>
+                <span class="text-xs font-bold uppercase tracking-widest" style="color:var(--muted)">Technical Indicators</span>
+                <span class="ml-auto text-xs mono" style="color:var(--muted)" id="indicatorTimeframe">4H</span>
+            </div>
+            <div id="indicatorPanel"><div class="text-center py-6 text-sm" style="color:var(--muted)"><i class="fa-solid fa-circle-notch fa-spin mr-2"></i>Loading…</div></div>
+        </div>
+
+        <!-- Confluence -->
+        <div class="panel p-5 flex flex-col items-center text-center justify-between">
+            <div class="w-full">
+                <div class="text-xs font-bold uppercase tracking-widest mb-3" style="color:var(--muted)">Master Confluence</div>
+                <div id="signalSection" class="signal-neutral w-full rounded-2xl px-4 py-5 mb-3 transition-all duration-500">
+                    <div class="text-xl font-black uppercase tracking-widest text-white" id="signalText"><i class="fa-solid fa-circle-notch fa-spin" style="color:var(--muted)"></i></div>
+                    <div class="text-xs mt-1" id="signalSubtext" style="color:var(--muted)">Analyzing…</div>
+                </div>
+                <div class="w-full mb-3">
+                    <div class="flex justify-between text-xs mb-1.5" style="color:var(--muted)"><span>Confluence</span><span id="confluenceScore" class="mono font-bold text-white">--/10</span></div>
+                    <div class="gauge-bar"><div class="gauge-fill" id="confluenceBar" style="width:0%;background:var(--muted)"></div></div>
+                </div>
+                <div class="mb-3">
+                    <div class="flex justify-between text-xs mb-1" style="color:var(--muted)"><span style="color:var(--bull);font-size:10px">● BULL</span><span style="color:var(--bear);font-size:10px">BEAR ●</span></div>
+                    <div class="vote-track"><div class="vote-bull-bar" id="voteBull" style="width:50%"></div><div class="vote-bear-bar" id="voteBear" style="width:50%"></div></div>
+                    <div class="flex justify-between text-xs mt-1 mono"><span id="voteBullPct" style="color:var(--bull)">50%</span><span id="voteBearPct" style="color:var(--bear)">50%</span></div>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2 w-full text-xs">
+                <div class="rounded-xl p-3 text-center" style="background:var(--ink);border:1px solid var(--border)"><div class="mb-1" style="color:var(--muted)">RSI(14)</div><div id="rsiValue" class="mono font-bold text-white">--</div></div>
+                <div class="rounded-xl p-3 text-center" style="background:var(--ink);border:1px solid var(--border)"><div class="mb-1" style="color:var(--muted)">EMA(20)</div><div id="maValue" class="mono font-bold text-white">--</div></div>
+                <div class="rounded-xl p-3 text-center" style="background:var(--ink);border:1px solid var(--border)"><div class="mb-1" style="color:var(--muted)">MACD</div><div id="macdValue" class="mono font-bold text-white">--</div></div>
+                <div class="rounded-xl p-3 text-center" style="background:var(--ink);border:1px solid var(--border)"><div class="mb-1" style="color:var(--muted)">BB Width</div><div id="bbValue" class="mono font-bold text-white">--</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8 STRATEGY CARDS -->
+    <div class="panel p-5">
+        <div class="flex items-center gap-3 mb-4 flex-wrap">
+            <i class="fa-solid fa-chess-knight" style="color:var(--gold)"></i>
+            <span class="text-sm font-bold text-white">8-Strategy Confluence Engine</span>
+            <span id="strategyBadge" class="hc-badge hc-neutral">Analyzing…</span>
+            <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+                <span class="text-xs" style="color:var(--muted)">Agreements:</span>
+                <span id="agreeCount" class="mono text-sm font-bold text-white">--/8</span>
+            </div>
+        </div>
+        <div class="strategies-grid" id="strategyCards">
+            <div class="sc-neutral strat-card text-center py-6" style="grid-column:1/-1"><i class="fa-solid fa-circle-notch fa-spin mr-2" style="color:var(--muted)"></i><span style="color:var(--muted)">Running 8 strategy analyses…</span></div>
+        </div>
+        <div id="masterVerdictStrip" class="hidden verdict-neutral rounded-xl p-4 mt-4">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+                <div>
+                    <div style="color:var(--muted);font-size:10px;font-weight:700;letter-spacing:0.1em;margin-bottom:4px">MASTER VERDICT</div>
+                    <div id="verdictDir" style="font-family:'Space Mono',monospace;font-size:1.5rem;font-weight:900;color:white">--</div>
+                    <div id="verdictSub" style="font-size:11px;color:var(--muted);margin-top:2px">--</div>
+                </div>
+                <div style="flex:1;min-width:200px;max-width:340px">
+                    <div class="flex justify-between text-xs mb-1" style="color:var(--muted)"><span>Bull weight</span><span>Bear weight</span></div>
+                    <div class="vote-track" style="height:10px"><div class="vote-bull-bar" id="masterBull" style="width:50%"></div><div class="vote-bear-bar" id="masterBear" style="width:50%"></div></div>
+                    <div class="flex justify-between mono text-xs mt-1 font-bold"><span id="masterBullPct" style="color:var(--bull)">50%</span><span id="masterBearPct" style="color:var(--bear)">50%</span></div>
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                    <div class="banner-box bb-green"><div style="color:var(--bull);font-size:9px;font-weight:700;margin-bottom:3px">TARGET TP</div><div id="verdictTP" style="font-family:'Space Mono',monospace;font-weight:900;color:var(--bull)">--</div></div>
+                    <div class="banner-box bb-red"><div style="color:var(--bear);font-size:9px;font-weight:700;margin-bottom:3px">STOP LOSS</div><div id="verdictSL" style="font-family:'Space Mono',monospace;font-weight:900;color:var(--bear)">--</div></div>
+                    <div class="banner-box bb-gray"><div style="color:var(--muted);font-size:9px;font-weight:700;margin-bottom:3px">ATR</div><div id="verdictATR" style="font-family:'Space Mono',monospace;font-weight:900;color:#e2eaf5">--</div></div>
+                    <div class="banner-box bb-gray"><div style="color:var(--muted);font-size:9px;font-weight:700;margin-bottom:3px">ADX</div><div id="verdictADX" style="font-family:'Space Mono',monospace;font-weight:900;color:#e2eaf5">--</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart + News -->
+    <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-4">
+        <div class="panel p-5 flex flex-col" style="height:480px">
+            <div class="flex items-center justify-between mb-4 flex-shrink-0 flex-wrap gap-2">
+                <div class="flex items-center gap-3">
+                    <h3 class="font-bold text-white text-sm flex items-center gap-2"><i class="fa-solid fa-chart-area" style="color:var(--accent)"></i> Price Action</h3>
+                    <div class="flex gap-1">
+                        <button onclick="toggleLayer('price')" data-layer="price" class="layer-btn active text-xs px-2 py-0.5 rounded font-semibold" style="border:1px solid rgba(0,212,255,0.4);color:var(--accent)">Price</button>
+                        <button onclick="toggleLayer('ema20')" data-layer="ema20" class="layer-btn active text-xs px-2 py-0.5 rounded font-semibold" style="border:1px solid rgba(251,191,36,0.4);color:#fbbf24">EMA20</button>
+                        <button onclick="toggleLayer('ema50')" data-layer="ema50" class="layer-btn active text-xs px-2 py-0.5 rounded font-semibold" style="border:1px solid rgba(167,139,250,0.4);color:#a78bfa">EMA50</button>
+                        <button onclick="toggleLayer('bbUp')" data-layer="bbUp" class="layer-btn active text-xs px-2 py-0.5 rounded font-semibold" style="border:1px solid rgba(148,163,184,0.4);color:#94a3b8">BB</button>
+                    </div>
+                </div>
+                <span class="text-xs mono" style="color:var(--muted)" id="chartInfoText"></span>
+            </div>
+            <div class="relative flex-1 min-h-0"><canvas id="priceChart"></canvas></div>
+        </div>
+        <div class="panel p-5 flex flex-col" style="height:480px">
+            <div class="flex items-center justify-between mb-3 flex-shrink-0">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-newspaper text-sm" style="color:var(--gold)"></i>
+                    <span class="text-xs font-bold uppercase tracking-widest" style="color:var(--muted)">Market News</span>
+                    <span id="newsBadge" class="text-xs px-2 py-0.5 rounded-full" style="background:rgba(255,209,102,0.1);color:var(--gold);border:1px solid rgba(255,209,102,0.2)">Live</span>
+                </div>
+                <span id="newsTimestamp" class="text-xs" style="color:var(--muted)">--</span>
+            </div>
+            <div id="newsFeed" class="space-y-3 overflow-y-auto flex-1 pr-1">
+                <div class="text-center py-6 text-sm" style="color:var(--muted)"><i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Loading news…</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MACD + RSI -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="panel p-5" style="height:160px">
+            <div class="flex items-center gap-2 mb-2">
+                <i class="fa-solid fa-wave-square text-sm" style="color:#a78bfa"></i>
+                <span class="text-xs font-bold uppercase tracking-widest" style="color:var(--muted)">MACD (12, 26, 9)</span>
+                <span id="macdSignalBadge" class="ind-badge ind-neut ml-auto">--</span>
+            </div>
+            <div class="relative" style="height:100px"><canvas id="macdChart"></canvas></div>
+        </div>
+        <div class="panel p-5" style="height:160px">
+            <div class="flex items-center gap-2 mb-2">
+                <i class="fa-solid fa-chart-line text-sm" style="color:var(--accent)"></i>
+                <span class="text-xs font-bold uppercase tracking-widest" style="color:var(--muted)">RSI (14)</span>
+                <span class="text-xs ml-2" style="color:var(--muted)">OB &gt;70 · OS &lt;30</span>
+                <span id="rsiSignalBadge" class="ind-badge ind-neut ml-auto">--</span>
+            </div>
+            <div class="relative" style="height:100px"><canvas id="rsiChart"></canvas></div>
+        </div>
+    </div>
+
+    <!-- Analysis + Calculator -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="panel panel-accent p-6">
+            <div class="flex items-center gap-2 mb-4">
+                <i class="fa-solid fa-brain text-sm" style="color:var(--accent)"></i>
+                <span class="text-xs font-bold uppercase tracking-widest" style="color:var(--muted)">Market Analysis Report</span>
+                <span class="ml-auto text-xs mono" style="color:var(--muted)" id="analysisTimeframe">4H</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 mb-4">
+                <div class="rounded-xl p-3 text-center" style="background:var(--ink);border:1px solid var(--border)"><div class="text-xs mb-1" style="color:var(--muted)">Trend</div><div id="trendLabel" class="font-bold text-sm text-white">--</div></div>
+                <div class="rounded-xl p-3 text-center" style="background:var(--ink);border:1px solid var(--border)"><div class="text-xs mb-1" style="color:var(--muted)">Momentum</div><div id="momentumLabel" class="font-bold text-sm text-white">--</div></div>
+                <div class="rounded-xl p-3 text-center" style="background:var(--ink);border:1px solid var(--border)"><div class="text-xs mb-1" style="color:var(--muted)">Volatility</div><div id="volatilityLabel" class="font-bold text-sm text-white">--</div></div>
+            </div>
+            <p id="analysisText" class="text-sm leading-relaxed mb-4" style="color:#b0c4d8">Gathering market data…</p>
+            <div id="entryLevelsSection" style="display:none">
+                <div class="text-xs font-bold uppercase tracking-widest mb-2" style="color:var(--muted)">ATR-Based Trade Levels</div>
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="rounded-xl p-3 text-center" style="background:rgba(0,230,118,0.05);border:1px solid rgba(0,230,118,0.2)"><div class="text-xs font-semibold mb-1" style="color:var(--bull)">ENTRY ZONE</div><div id="entryZone" class="mono text-sm font-bold text-white">--</div></div>
+                    <div class="rounded-xl p-3 text-center" style="background:rgba(255,61,90,0.05);border:1px solid rgba(255,61,90,0.2)"><div class="text-xs font-semibold mb-1" style="color:var(--bear)">STOP LOSS</div><div id="suggestSL" class="mono text-sm font-bold text-white">--</div></div>
+                    <div class="rounded-xl p-3 text-center" style="background:rgba(0,230,118,0.05);border:1px solid rgba(0,230,118,0.2)"><div class="text-xs font-semibold mb-1" style="color:var(--bull)">TARGET</div><div id="suggestTP" class="mono text-sm font-bold text-white">--</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-gold p-6">
+            <div class="flex items-center gap-2 mb-5">
+                <i class="fa-solid fa-calculator text-sm" style="color:var(--gold)"></i>
+                <span class="text-xs font-bold uppercase tracking-widest" style="color:var(--muted)">Trade Setup Calculator</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mb-3">
+                <div>
+                    <label class="text-xs font-semibold uppercase tracking-wider block mb-1.5" style="color:var(--muted)">Direction</label>
+                    <select id="tradeType" class="w-full text-sm font-bold rounded-xl px-3 py-2.5 outline-none" style="background:var(--ink);border:1px solid var(--border);color:#e2eaf5"><option value="long">▲ LONG (Buy)</option><option value="short">▼ SHORT (Sell)</option></select>
+                </div>
+                <div>
+                    <label class="text-xs font-semibold uppercase tracking-wider block mb-1.5" style="color:var(--muted)">Leverage</label>
+                    <div class="flex"><span class="text-sm font-bold px-3 py-2.5 rounded-l-xl" style="background:var(--panel2);border:1px solid var(--border);border-right:0;color:var(--muted)">×</span><input type="number" id="tradeLeverage" value="10" min="1" max="125" class="w-full text-sm font-bold rounded-r-xl px-3 py-2.5 outline-none mono" style="background:var(--ink);border:1px solid var(--border);color:#e2eaf5"></div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="text-xs font-semibold uppercase tracking-wider block mb-1.5" style="color:var(--muted)">Entry Price</label>
+                <input type="number" id="tradeEntry" step="any" placeholder="Uses current price if empty" class="w-full text-sm font-bold rounded-xl px-3 py-2.5 outline-none mono" style="background:var(--ink);border:1px solid var(--border);color:#e2eaf5">
+            </div>
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div><label class="text-xs font-semibold uppercase tracking-wider block mb-1.5" style="color:var(--muted)">Risk % (SL)</label><div class="relative"><input type="number" id="tradeRisk" value="2" step="0.5" class="w-full text-sm font-bold rounded-xl px-3 py-2.5 pr-7 outline-none mono" style="background:var(--ink);border:1px solid var(--border);color:#e2eaf5"><span class="absolute right-3 top-2.5 text-xs font-bold" style="color:var(--muted)">%</span></div></div>
+                <div><label class="text-xs font-semibold uppercase tracking-wider block mb-1.5" style="color:var(--muted)">Reward % (TP)</label><div class="relative"><input type="number" id="tradeReward" value="6" step="0.5" class="w-full text-sm font-bold rounded-xl px-3 py-2.5 pr-7 outline-none mono" style="background:var(--ink);border:1px solid var(--border);color:#e2eaf5"><span class="absolute right-3 top-2.5 text-xs font-bold" style="color:var(--muted)">%</span></div></div>
+            </div>
+            <button id="calcTradeBtn" class="w-full py-3 rounded-xl font-bold text-sm tracking-wide text-black transition-all hover:opacity-90 active:scale-95" style="background:linear-gradient(135deg,#ffd166,#ffb700)"><i class="fa-solid fa-bolt mr-2"></i> CALCULATE SETUP</button>
+            <div id="calcResults" class="hidden mt-4 space-y-2">
+                <div class="rounded-xl p-4 flex justify-between items-center" style="background:rgba(0,230,118,0.07);border:1px solid rgba(0,230,118,0.25)"><div><div class="text-xs font-bold mb-0.5" style="color:var(--bull)">TAKE PROFIT</div><div id="tpPrice" class="mono text-2xl font-black" style="color:var(--bull)">--</div></div><div id="tpPl" class="font-bold text-sm px-3 py-1 rounded-lg" style="color:var(--bull);background:rgba(0,230,118,0.1)">--</div></div>
+                <div class="flex items-center gap-3"><div class="h-px flex-1" style="background:var(--border)"></div><div class="text-xs rounded-full px-3 py-1" style="color:var(--muted);background:var(--panel);border:1px solid var(--border)">Entry <span id="entryDisplay" class="mono text-white font-bold">--</span></div><div class="text-xs rounded-full px-3 py-1" style="color:var(--muted);background:var(--panel);border:1px solid var(--border)">RR <span id="rrRatio" class="mono font-bold" style="color:var(--gold)">--</span></div><div class="h-px flex-1" style="background:var(--border)"></div></div>
+                <div class="rounded-xl p-4 flex justify-between items-center" style="background:rgba(255,61,90,0.07);border:1px solid rgba(255,61,90,0.25)"><div><div class="text-xs font-bold mb-0.5" style="color:var(--bear)">STOP LOSS</div><div id="slPrice" class="mono text-2xl font-black" style="color:var(--bear)">--</div></div><div id="slPl" class="font-bold text-sm px-3 py-1 rounded-lg" style="color:var(--bear);background:rgba(255,61,90,0.1)">--</div></div>
+            </div>
+            <div id="calcPlaceholder" class="flex items-center justify-center gap-3 mt-4 py-4 text-sm" style="color:var(--muted)"><i class="fa-solid fa-bullseye opacity-40"></i><span>Fill the form above to calculate levels</span></div>
+        </div>
+    </div>
+
+    <div class="disclaimer p-4 flex items-start gap-3">
+        <i class="fa-solid fa-triangle-exclamation mt-0.5 flex-shrink-0" style="color:var(--gold)"></i>
+        <p class="text-xs leading-relaxed" style="color:var(--muted)"><strong style="color:var(--gold)">Educational Tool — Not Financial Advice:</strong> Live data from Binance WebSocket + Kraken. 8-strategy confluence analysis. No signal guarantees outcome. Markets are driven by macro events and fundamentals that technical analysis cannot fully capture. Always apply strict risk management. Never risk more than you can afford to lose.</p>
+    </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
